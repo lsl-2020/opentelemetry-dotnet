@@ -23,7 +23,7 @@ public class Startup
 
         services.AddOpenTelemetry()
             .WithTracing(builder => builder
-                .AddAspNetCoreInstrumentation()
+                .AddHttpClientInstrumentation()
                 .AddSource(nameof(MessageSender))
                 .AddZipkinExporter(b =>
                 {
