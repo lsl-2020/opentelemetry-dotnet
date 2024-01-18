@@ -7,6 +7,8 @@ using Microsoft.Extensions.Hosting;
 using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
 
+namespace FunctionApp;
+
 internal class Program
 {
     private static void Main(string[] args)
