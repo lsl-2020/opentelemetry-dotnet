@@ -1,11 +1,13 @@
 // Copyright The OpenTelemetry Authors
 // SPDX-License-Identifier: Apache-2.0
 
+using System.Diagnostics;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-
 using OpenTelemetry.Exporter.Geneva;
+using OpenTelemetry.Logs;
 using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
 
@@ -18,8 +20,27 @@ internal class Program
         // test trace
         var host = new HostBuilder()
             .ConfigureFunctionsWorkerDefaults()
+            .ConfigureLogging(builder =>
+            {
+                builder.ClearProviders();
+                builder.AddConsole();
+                /*
+                builder.AddOpenTelemetry(options =>
+                {
+                    options
+                        .AddGenevaLogExporter(genevaExporterOptions =>
+                        {
+                            genevaExporterOptions.ConnectionString = "EtwSession=OpenTelemetry";
+                        })
+                        .AddConsoleExporter()
+                        .AddOtlpExporter();
+                });
+                */
+            })
             .ConfigureServices(s =>
             {
+                s.AddSingleton(new ActivitySource("FunctionApp"));
+
                 s.AddOpenTelemetry()
                     .WithTracing(builder =>
                     {
@@ -32,12 +53,14 @@ internal class Program
                            {
                                options.ConnectionString = "EtwSession=OpenTelemetry";
                            })
-                           .AddConsoleExporter();
+                           .AddConsoleExporter()
+                           .AddOtlpExporter();
                     });
             })
             .Build();
 
-        host.Services.GetRequiredService<ILoggerFactory>()?.CreateLogger<Program>()
+        using var activity = host.Services.GetRequiredService<ActivitySource>().StartActivity("Main");
+        host.Services.GetRequiredService<ILoggerFactory>().CreateLogger<Program>()
             .LogInformation("Hello from {name} {price}.", "tomato", 2.99);
 
         host.Run();
