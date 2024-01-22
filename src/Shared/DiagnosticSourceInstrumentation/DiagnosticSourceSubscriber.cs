@@ -20,7 +20,9 @@ internal sealed class DiagnosticSourceSubscriber : IDisposable, IObserver<Diagno
         ListenerHandler handler,
         Func<string, object, object, bool> isEnabledFilter,
         Action<string, string, Exception> logUnknownException)
-        : this(_ => handler, value => handler.SourceName == value.Name, isEnabledFilter, logUnknownException)
+         : this(_ => handler, value => handler.SourceName == value.Name, isEnabledFilter, logUnknownException)
+
+         // : this(_ => handler, value => true, isEnabledFilter, logUnknownException)
     {
     }
 

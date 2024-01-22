@@ -42,6 +42,7 @@
     <PackageVersion Include="OpenTelemetry" Version="$(OTelLatestStableVer)" />
     <PackageVersion Include="OpenTelemetry.Api" Version="$(OTelLatestStableVer)" />
     <PackageVersion Include="OpenTelemetry.Api.ProviderBuilderExtensions" Version="$(OTelLatestStableVer)" />
+    <PackageVersion Include="OpenTelemetry.Exporter.Geneva" Version="1.6.0" />
     <PackageVersion Include="OpenTelemetry.Exporter.InMemory" Version="$(OTelLatestStableVer)" />
     <PackageVersion Include="OpenTelemetry.Extensions.Hosting" Version="$(OTelLatestStableVer)" />
     <PackageVersion Include="OpenTelemetry.Extensions.Propagators" Version="$(OTelLatestStableVer)" />

@@ -22,6 +22,11 @@ internal sealed class AspNetCoreInstrumentation : IDisposable
     private readonly Func<string, object, object, bool> isEnabled = (eventName, _, _)
         => DiagnosticSourceEvents.Contains(eventName);
 
+    /*
+    private readonly Func<string, object, object, bool> isEnabled = (eventName, _, _)
+        => true;
+    */
+
     private readonly DiagnosticSourceSubscriber diagnosticSourceSubscriber;
 
     public AspNetCoreInstrumentation(HttpInListener httpInListener)

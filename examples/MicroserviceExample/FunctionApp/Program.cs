@@ -3,7 +3,9 @@
 
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 
+using OpenTelemetry.Exporter.Geneva;
 using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
 
@@ -13,6 +15,7 @@ internal class Program
 {
     private static void Main(string[] args)
     {
+        // test trace
         var host = new HostBuilder()
             .ConfigureFunctionsWorkerDefaults()
             .ConfigureServices(s =>
@@ -21,15 +24,21 @@ internal class Program
                     .WithTracing(builder =>
                     {
                         builder
-                           .AddSource("Microsoft.Azure.Functions.Worker")
                            .SetResourceBuilder(ResourceBuilder.CreateDefault())
+                           .AddHttpClientInstrumentation()
                            .AddAspNetCoreInstrumentation()
-                           .SetSampler(new ParentBasedSampler(new AlwaysOnSampler()))
-                           .AddConsoleExporter()
-                           .AddOtlpExporter();
+                           .SetSampler(new AlwaysOnSampler())
+                           .AddGenevaTraceExporter(options =>
+                           {
+                               options.ConnectionString = "EtwSession=OpenTelemetry";
+                           })
+                           .AddConsoleExporter();
                     });
             })
             .Build();
+
+        host.Services.GetRequiredService<ILoggerFactory>()?.CreateLogger<Program>()
+            .LogInformation("Hello from {name} {price}.", "tomato", 2.99);
 
         host.Run();
     }
