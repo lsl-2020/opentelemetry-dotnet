@@ -18,6 +18,7 @@ public class Function1(ILoggerFactory loggerFactory, ActivitySource activitySour
     public HttpResponseData Run([HttpTrigger(AuthorizationLevel.Anonymous, "get", "post")] HttpRequestData req)
     {
         using var activity = this.activitySource.StartActivity("Function1");
+        using var activity2 = TestActivitySource.ActivitySource.StartActivity("Function1.2");
         this.logger.LogInformation("C# HTTP trigger function processed a request.");
 
         var response = req.CreateResponse(HttpStatusCode.OK);

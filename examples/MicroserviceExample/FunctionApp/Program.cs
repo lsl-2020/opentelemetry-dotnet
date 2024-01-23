@@ -45,21 +45,24 @@ internal class Program
                     .WithTracing(builder =>
                     {
                         builder
-                           .SetResourceBuilder(ResourceBuilder.CreateDefault())
-                           .AddHttpClientInstrumentation()
-                           .AddAspNetCoreInstrumentation()
-                           .SetSampler(new AlwaysOnSampler())
-                           .AddGenevaTraceExporter(options =>
-                           {
-                               options.ConnectionString = "EtwSession=OpenTelemetry";
-                           })
-                           .AddConsoleExporter()
-                           .AddOtlpExporter();
+                            .AddSource("FunctionApp")
+                            .AddSource("StaticActivitySource")
+                            .SetResourceBuilder(ResourceBuilder.CreateDefault())
+                            .AddHttpClientInstrumentation()
+                            .AddAspNetCoreInstrumentation()
+                            .SetSampler(new AlwaysOnSampler())
+                            .AddGenevaTraceExporter(options =>
+                            {
+                                options.ConnectionString = "EtwSession=OpenTelemetry";
+                            })
+                            .AddConsoleExporter()
+                            .AddOtlpExporter();
                     });
             })
             .Build();
 
         using var activity = host.Services.GetRequiredService<ActivitySource>().StartActivity("Main");
+        using var activity2 = TestActivitySource.ActivitySource.StartActivity("Main2");
         host.Services.GetRequiredService<ILoggerFactory>().CreateLogger<Program>()
             .LogInformation("Hello from {name} {price}.", "tomato", 2.99);
 
